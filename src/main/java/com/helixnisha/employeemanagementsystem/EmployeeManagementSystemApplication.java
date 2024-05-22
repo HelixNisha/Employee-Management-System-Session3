@@ -10,27 +10,22 @@ import java.util.List;
 
 public class EmployeeManagementSystemApplication {
 	public static void main(String[] args) {
-		SessionFactory sessionFactory = new Configuration()
+		try (SessionFactory sessionFactory = new Configuration()
 				.configure("hibernate.cfg.xml")
 				.addAnnotatedClass(Employee.class)
-				.buildSessionFactory();
+				.buildSessionFactory()) {
 
-		EmployeeDAO employeeDAO = new EmployeeDAO(sessionFactory);
+			EmployeeDAO employeeDAO = new EmployeeDAO(sessionFactory);
 
-		// Creating and saving a new employee
-		Employee newEmployee = new Employee();
-		newEmployee.setFirstName("John");
-		newEmployee.setLastName("Deo");
-		newEmployee.setEmail("john.doe@example.com");
-
-		employeeDAO.saveEmployee(newEmployee);
-
-		// Retrieving all employees
-		List<Employee> employees = employeeDAO.getAllEmployees();
-		for (Employee employee : employees) {
-			System.out.println(employee);
+			// Retrieving all employees
+			List<Employee> employees = employeeDAO.getAllEmployees();
+			for (Employee employee : employees) {
+				// Print employee details in desired format
+				System.out.println("FirstName is " + employee.getFirstName() + ", Last Name is " +
+						employee.getLastName() + ", and Email is " + employee.getEmail());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		sessionFactory.close(); // Don't forget to close the session factory
 	}
 }

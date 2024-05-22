@@ -17,25 +17,29 @@ public class EmployeeDAO {
     }
 
     public void saveEmployee(Employee employee) {
-        Session session = sessionFactory.openSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            // Start a transaction
+            transaction = session.beginTransaction();
+            // Save the employee
             session.save(employee);
-            tx.commit();
+            // Commit the transaction
+            transaction.commit();
         } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
+            if (transaction != null) {
+                transaction.rollback();
             }
             e.printStackTrace();
-        } finally {
-            session.close();
         }
     }
 
     public List<Employee> getAllEmployees() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("from Employee", Employee.class).list();
+            // Retrieve all employees
+            return session.createQuery("FROM Employee", Employee.class).list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
